@@ -1,5 +1,5 @@
 {:deps {my/deps {:local/root "."}}
- :tasks {git-data {:requires [[dsann.git :as g]]
+ :tasks {git-data {:requires [[dsann.bb.git :as g]]
                    :task (g/git-data)}
 
          pp-git-data {:depends [git-data]

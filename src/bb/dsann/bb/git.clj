@@ -1,4 +1,4 @@
-(ns dsann.git
+(ns dsann.bb.git
   (:require [babashka.process :refer [shell]]
             [clojure.string :as s]
             [babashka.fs :as fs]
