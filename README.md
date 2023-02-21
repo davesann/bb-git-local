@@ -5,6 +5,6 @@ local git interactions for babashka
 ## Deps
 
 ```clojure
-io.github.davesann/bb-git-local {:git/tag "v1" :git/sha "cbaecf7"}
+io.github.davesann/bb-git-local {:git/tag "v2" :git/sha "fd4debc"}
 ```
 
