@@ -1,0 +1,4 @@
+{:paths ["src/bb"]
+ :deps {io.github.davesann/let-map
+          ;{:local/root "../../public-libs/let-map"}
+          {:git/sha "2128d45" :git/tag "v3"}}}
