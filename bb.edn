@@ -1,1 +1,19 @@
-{}
+{:deps {my/deps {:local/root "."}}
+ :tasks {git-data {:requires [[dsann.git :as g]]
+                   :task (g/git-data)}
+
+         pp-git-data {:depends [git-data]
+                      :task (binding [*print-namespace-maps* false]
+                               (clojure.pprint/pprint git-data))}
+
+         create-readme {:doc "Generate README File"
+                          :depends [git-data]
+                          :extra-deps {comb/comb {:mvn/version "0.1.1"}}
+                          :requires [[comb.template :as comb]]
+                          :task (binding [*print-namespace-maps* false]
+                                  (let [readme (slurp "src/docs/README.comb.md")]
+                                    (spit "README.md" (comb/eval readme git-data))))}}}
+
+
+
+
