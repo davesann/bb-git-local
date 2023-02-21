@@ -7,13 +7,18 @@
                                (clojure.pprint/pprint git-data))}
 
          create-readme {:doc "Generate README File"
-                          :depends [git-data]
-                          :extra-deps {comb/comb {:mvn/version "0.1.1"}}
-                          :requires [[comb.template :as comb]]
-                          :task (binding [*print-namespace-maps* false]
-                                  (let [readme (slurp "src/docs/README.comb.md")]
-                                    (spit "README.md" (comb/eval readme git-data))))}}}
+                        :depends [git-data]
+                        :extra-deps {comb/comb {:mvn/version "0.1.1"}}
+                        :requires [[comb.template :as comb]]
+                        :task (binding [*print-namespace-maps* false]
+                                (let [readme (slurp "src/docs/README.comb.md")]
+                                  (spit "README.md" (comb/eval readme git-data))))}
 
-
+         quickdoc {:doc        "Invoke quickdoc"
+                   :extra-deps {io.github.borkdude/quickdoc {:git/sha "62dd3c6a828c3a5e61bae6ca80c8ba4781356a67"}}
+                   :task       (exec 'quickdoc.api/quickdoc)
+                   :exec-args  {:git/branch "main"
+                                :github/repo "https://github.com/davesann/bb-git-local"
+                                :source-paths ["src/bb"]}}}}
 
 

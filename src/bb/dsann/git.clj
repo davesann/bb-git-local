@@ -5,20 +5,28 @@
             [dsann.let-map :refer [let-map]]))
 
 
-(defn git-repo? []
+(defn git-repo?
+  "checks if .git exists"
+  []
   (fs/exists? ".git"))
 
-(defn check-git! []
+(defn check-git!
+  "checks the current directory is a git repo. Throws if not"
+  []
   (when-not (git-repo?)
     (let [p (fs/canonicalize ".")]
       (throw (ex-info (str "git-local : '" p "'" " is not a git repository") {:path p})))))
 
-(defn shell-git [command]
+(defn shell-git
+  "Checks in a git repo, executes command and return the result"
+  [command]
   (check-git!)
   (let [result (shell {:out :string} command)]
     (->> result :out)))
 
-(defn remove-tag-prefix [tag]
+(defn remove-tag-prefix
+  "removes refs/tag/ from tagnames"
+  [tag]
   (s/replace-first tag (re-pattern "^refs/tags/") ""))
 
 (defn parse-git-tags [s]
@@ -31,7 +39,13 @@
                                   :commit-sha-abbrev (subs hash 0 7)})))
                {})))
 
-(defn git-tags []
+(defn git-tags
+  "extracts a map of the form:
+   {tagname  {:commit-sha        \"full sha here\"
+              :commit-sha-abbrev \"abbreviated sha here\"}
+    tagname2 ...}
+  "
+  []
   (-> "git show-ref --tags"
       shell-git
       parse-git-tags))
@@ -46,12 +60,19 @@
           (assoc r tag {:tag-message message}))
         {})))
 
-(defn git-tag-messages []
+(defn git-tag-messages
+  "extracts a map of the form:
+   {tagname  {:tag-message   \"first line of tag message here\"
+    tagname2 ...}
+  "
+  []
   (-> "git tag -n"
       shell-git
       parse-git-messages))
 
-(defn git-latest-tag []
+(defn git-latest-tag 
+  "gets the most recent git tag"
+  []
   (-> "git describe --abbrev=0"
       shell-git
       s/trim))
@@ -60,17 +81,22 @@
   (merge-with merge (git-tags) (git-tag-messages)))
 
 (defn git-remote-origin []
+  "gets the remote origin string"
   (->> "git config --get remote.origin.url"
       shell-git
       s/trim))
 
-(defn git-remote-name []
+(defn git-remote-name 
+  "gets the remote name for deps.edn coords"
+  []
   (->> (git-remote-origin)
       (re-matches (re-pattern ".*github[.]com:(.*)[.]git$"))
       second))
 
 
-(defn git-data []
+(defn git-data 
+  "extracts git data (for tags and versions currently)" 
+  []
   (let-map
     git-remote-name (git-remote-name)
     git-coord-name  (str "io.github." git-remote-name)
